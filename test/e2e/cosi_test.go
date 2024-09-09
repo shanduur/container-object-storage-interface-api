@@ -68,15 +68,10 @@ func TestMain(m *testing.M) {
 	crds := &apiextensions.CustomResourceDefinitionList{}
 	if !noInstallCRDs {
 		crdPaths := []string{
-			"../../client/config/crd/objectstorage.k8s.io_bucketaccessclasses.yaml",
-			"../../client/config/crd/objectstorage.k8s.io_bucketaccesses.yaml",
-			"../../client/config/crd/objectstorage.k8s.io_bucketclaims.yaml",
-			"../../client/config/crd/objectstorage.k8s.io_bucketclasses.yaml",
-			"../../client/config/crd/objectstorage.k8s.io_buckets.yaml",
+			"../",
 		}
 
 		for _, path := range crdPaths {
-
 			crd, err := helpers.Load(path)
 			if err != nil {
 				log.Fatalf("failed to load resource: %s", err)

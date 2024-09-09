@@ -3,12 +3,15 @@ package envfuncs
 import (
 	"context"
 	"fmt"
+	"io"
 
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/types"
+	"sigs.k8s.io/kustomize/api/krusty"
+	"sigs.k8s.io/kustomize/kyaml/filesys"
 )
 
 type (
@@ -33,6 +36,23 @@ func RegisterResources(objects ...runtime.Object) types.EnvFunc {
 
 		return ctx, nil
 	}
+}
+
+func Kustomize(path string, wr io.Writer) error {
+	k := krusty.MakeKustomizer(krusty.MakeDefaultOptions())
+
+	m, err := k.Run(filesys.MakeFsOnDisk(), path)
+	if err != nil {
+		return err
+	}
+
+	yml, err := m.AsYaml()
+	if err != nil {
+		return err
+	}
+
+	_, err = wr.Write(yml)
+	return err
 }
 
 // InstallCRDs installs the necessary CRDs unless skipping is specified.
